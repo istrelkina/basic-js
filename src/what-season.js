@@ -13,10 +13,7 @@ const { NotImplementedError } = require('../extensions/index.js');
  */
 function getSeason(date) {
   let toString = {}.toString;
-  console.debug(date);
   if (date == undefined || !date) {
-    console.log('Unable to determine the time of year!');
-    //throw new Error('Unable to determine the time of year!');
     return 'Unable to determine the time of year!';
   } else
     if (!(toString.call(date) === '[object Date]') || date[Symbol.toStringTag] === 'Date') {
@@ -25,7 +22,6 @@ function getSeason(date) {
     }
   let month = date.getMonth();
 
-  console.debug('month = ', month);
   switch (month) {
     case 0: return 'winter'; break;
     case 1: return 'winter'; break;
