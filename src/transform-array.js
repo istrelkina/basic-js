@@ -14,53 +14,53 @@ const { NotImplementedError } = require('../extensions/index.js');
  * 
  */
 function transform(arr) {
-  let arrResult = arr;
+  let arrResult = [];
   let isDiscardNext = false;
-  //const isDiscardPrev = false;
   let isDoubleNext = false;
-  //const isDoublePrev = false;
-  if (typeof (arr) != 'Array') return "'arr' parameter must be an instance of the Array!";
-  console.log(arr);
+  let isDeleted = false;
+  if (!(arr instanceof Array)) {
+    throw new Error("'arr' parameter must be an instance of the Array!");
+  }
 
-  // arr.forEach((element, index, array) => {
-  //   if (typeof (element) === 'string') {
-  //     if (element === '--discard-next') {
-  //       isDiscardNext = true;
-  //     };
-  //     if (element === '--discard-prev') {
-  //       if (arrResult.length > 1) {
-  //         arrResult.pop();
-  //       }
-  //     };
-  //     if (element === '--double-next') {
-  //       isDoubleNext = true;
-  //     };
-  //     if (element === '--double-prev') {
-  //       arrResult.push(array[index - 1]);
-  //     };
-  //   } else {
-  //     if (!isDiscardNext) {
-  //       arrResult.push(element);
-  //     };
-  //     if (isDoubleNext) {
-  //       arrResult.push(element);
+  for (let i = 0; i < arr.length; i++) {
+    if (!((arr[i] === '--double-prev' || arr[i] === '--discard-prev') && isDeleted)) isDeleted = false;
+    if (arr[i] === '--discard-next') {
+      isDiscardNext = true;
+    } else
+      if (arr[i] === '--discard-prev') {
+        if (!isDeleted) {
+          if (arrResult.length > 1) {
+            arrResult.pop();
+            isDeleted = true;
+          }
+        } else {
+          isDeleted = false;
+        }
+      } else
+        if (arr[i] === '--double-next') {
+          isDoubleNext = true;
+        } else
+          if (arr[i] === '--double-prev') {
+            if (!isDeleted) {
+              if (i > 1) {
+                arrResult.push(arr[i - 1]);
+              };
+            } else isDeleted = false;
+          } else {
+            if (!isDiscardNext) {
+              arrResult.push(arr[i]);
+            } else {
+              isDeleted = true;
+            };
+            if (isDoubleNext) {
+              arrResult.push(arr[i]);
 
-  //     };
-  //     isDiscardNext = false;
-  //     isDoubleNext = false;
-  //   }
-  // })
-  let transform = arrResult => arrResult.flatMap((elem, index, array) => {
-    if (array[index + 1] === '--discard-prev') return [];
-    if (array[index - 1] === '--double-next') return [elem, elem];
-    if (array[index + 1] === '--double-prev') return [elem, elem];
-
-    if (elem.toString().startsWith('--d')) return [];
-
-    return elem;
-  });
-
-  return transform(arr);
+            };
+            isDiscardNext = false;
+            isDoubleNext = false;
+          }
+  };
+  return arrResult;
 }
 
 module.exports = {
